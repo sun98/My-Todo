@@ -62,11 +62,11 @@ abstract class TaskDatabase : RoomDatabase() {
             // Not needed if you only populate on creation.
             taskDao.deleteAll()
 
-            (1..20).map {
+            (1..200).map {
                 Task(
-                    "task $it",
+                    "Task $it",
                     false,
-                    "detail of task $it",
+                    "Detail of task $it",
                     Calendar.getInstance().timeInMillis
                 )
             }.forEach { taskDao.insert(it) }

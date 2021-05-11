@@ -66,3 +66,5 @@ class MainActivity : AppCompatActivity() {
         btnAddTask?.setOnClickListener { fabOnClick() }
     }
 }
+
+// view drag helper

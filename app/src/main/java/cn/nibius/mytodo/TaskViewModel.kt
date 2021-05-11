@@ -22,6 +22,9 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         repository.modify(taskId, taskTitle, taskDetail)
     }
 
+    fun deleteById(taskId: Long) = viewModelScope.launch {
+        repository.deleteById(taskId)
+    }
 }
 
 class TaskViewModelFactory(private val repository: TaskRepository) : ViewModelProvider.Factory {
