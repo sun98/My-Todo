@@ -64,7 +64,6 @@ abstract class TaskDatabase : RoomDatabase() {
 
             (1..20).map {
                 Task(
-                    it.toLong(),
                     "task $it",
                     false,
                     "detail of task $it",

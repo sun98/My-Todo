@@ -7,4 +7,5 @@
     <string name="task_detail">Task Detail</string>
     <string name="empty_not_saved">Not saved.</string>
     <string name="toast_empty_title">Task title is empty!</string>
+    <string name="task_added">Task added</string>
 </resources>

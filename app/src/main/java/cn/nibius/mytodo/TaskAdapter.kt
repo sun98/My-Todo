@@ -2,15 +2,21 @@ package cn.nibius.mytodo
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.fragment.app.commit
+import androidx.fragment.app.add
+import androidx.fragment.app.replace
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import cn.nibius.mytodo.activity.AddNewTaskActivity
+import cn.nibius.mytodo.activity.MainActivity
+import cn.nibius.mytodo.fragment.TaskDetailFragment
 import cn.nibius.mytodo.room.Task
 
 class TaskAdapter(private val taskViewModel: TaskViewModel) :
@@ -34,12 +40,21 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
                 taskViewModel.changeStatus(task!!)
             }
             this.view.setOnClickListener {
-                val intent = Intent(context, AddNewTaskActivity::class.java)
-                intent.putExtra("callAction", "modify")
-                intent.putExtra("taskId", task?.taskId)
-                intent.putExtra("taskTitle", task?.taskTitle)
-                intent.putExtra("taskDetail", task?.taskDetail)
-                (context as Activity).startActivityForResult(intent, 1)
+                val bundle = Bundle()
+                bundle.putString("action", "editTask")
+                bundle.putStringArrayList(
+                    "taskData",
+                    arrayListOf(
+                        task?.taskId.toString(),
+                        task?.taskTitle,
+                        task?.taskDetail
+                    )
+                )
+                (context as MainActivity).supportFragmentManager.commit {
+                    replace<TaskDetailFragment>(R.id.mainFragmentContainerView, args = bundle)
+                    setReorderingAllowed(true)
+                    addToBackStack("editTask")
+                }
             }
         }
 

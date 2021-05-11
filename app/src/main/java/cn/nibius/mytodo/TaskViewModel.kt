@@ -18,9 +18,10 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         repository.changeStatus(task.taskId, !task.taskStatus)
     }
 
-    fun modify(task: Task) = viewModelScope.launch {
-        repository.modify(task.taskId, task)
+    fun modify(taskId: Long, taskTitle: String, taskDetail: String) = viewModelScope.launch {
+        repository.modify(taskId, taskTitle, taskDetail)
     }
+
 }
 
 class TaskViewModelFactory(private val repository: TaskRepository) : ViewModelProvider.Factory {

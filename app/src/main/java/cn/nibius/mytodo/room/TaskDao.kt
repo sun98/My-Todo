@@ -29,12 +29,10 @@ interface TaskDao {
     @Query("UPDATE task_table SET task_status=:status WHERE taskId=:taskId")
     suspend fun changeStatus(taskId: Long, status: Boolean)
 
-    @Query("UPDATE task_table SET task_status=:taskStatus,task_title=:taskTitle,task_Detail=:taskDetail,task_create_date=:taskCreateTime WHERE taskId=:taskId")
+    @Query("UPDATE task_table SET task_title=:taskTitle,task_Detail=:taskDetail WHERE taskId=:taskId")
     suspend fun modify(
         taskId: Long,
         taskTitle: String,
         taskDetail: String?,
-        taskStatus: Boolean,
-        taskCreateTime: Long
     )
 }
