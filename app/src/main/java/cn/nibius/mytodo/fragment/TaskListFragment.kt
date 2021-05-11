@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import cn.nibius.mytodo.activity.MainActivity
 import cn.nibius.mytodo.R
@@ -28,10 +27,12 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
 
         val swipeHandler = object : SwipeDeleteCallback(mainActivity) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                taskViewModel.deleteById(taskViewModel.allTasks.value!![viewHolder.adapterPosition].taskId)
+                taskViewModel.deleteById(
+                    taskViewModel.allTasks.value!![viewHolder.adapterPosition].taskId
+                )
             }
         }
-        val itemTouchHelper=ItemTouchHelper(swipeHandler)
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(taskRecyclerView)
     }
 }

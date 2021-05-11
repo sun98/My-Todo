@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.commit
 import androidx.fragment.app.add
@@ -65,23 +66,37 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
         }
 
         companion object {
-            fun create(parent: ViewGroup): TaskViewHolder {
+            fun create(parent: ViewGroup, viewType: Int): TaskViewHolder {
                 val view: View = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.task_item, parent, false)
+                    .inflate(
+                        if (viewType == 0) R.layout.task_item else R.layout.progress_bar,
+                        parent,
+                        false
+                    )
                 return TaskViewHolder(view)
             }
         }
     }
 
+    class ProgressViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+        private val progressBar: ProgressBar = view.findViewById(R.id.progressBar)
+
+    }
+
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): TaskViewHolder {
-        return TaskViewHolder.create(viewGroup)
+        return TaskViewHolder.create(viewGroup, viewType)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: TaskViewHolder, position: Int) {
+//        if(viewHolder is TaskViewHolder){
         val current = getItem(position)
         viewHolder.bind(current, taskViewModel)
+//        } else if(viewHolder is ProgressViewHolder){
+//
+//        }
+
     }
 
     companion object {
@@ -95,4 +110,8 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
             }
         }
     }
+
+//    override fun getItemViewType(position: Int): Int {
+//        return super.getItemViewType(position)
+//    }
 }
