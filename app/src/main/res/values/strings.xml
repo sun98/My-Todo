@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">My Todo</string>
+    <string name="text_add_task">添加</string>
+    <string name="add_a_new_task">Add a new task</string>
+    <string name="new_task">New Task</string>
+    <string name="task_title">Task Title</string>
+    <string name="task_detail">Task Detail</string>
+    <string name="empty_not_saved">Not saved.</string>
+    <string name="toast_empty_title">Task title is empty!</string>
+</resources>
