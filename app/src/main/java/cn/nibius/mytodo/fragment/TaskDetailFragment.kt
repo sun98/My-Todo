@@ -13,10 +13,11 @@ import cn.nibius.mytodo.room.Task
 import java.util.*
 
 class TaskDetailFragment : Fragment(R.layout.fragment_task_detail) {
+    var action = ""
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val bundle = arguments
-        val action = bundle?.getString("action")
+        action = bundle?.getString("action") ?: ""
         val mainActivity = (activity as MainActivity)
 
         val editTitle = view.findViewById<TextView>(R.id.editTaskTitle)
@@ -26,7 +27,7 @@ class TaskDetailFragment : Fragment(R.layout.fragment_task_detail) {
         // todo: change the fab icon
 
         if (action == "editTask") {
-            val taskData = bundle.getStringArrayList("taskData")
+            val taskData = bundle!!.getStringArrayList("taskData")
             taskId = (taskData?.get(0) ?: "").toLong()
             editTitle.text = taskData?.get(1) ?: ""
             editDetail.text = taskData?.get(2) ?: ""
@@ -36,37 +37,59 @@ class TaskDetailFragment : Fragment(R.layout.fragment_task_detail) {
             val taskTitle = editTitle.text.toString()
             if (taskTitle == "") {
                 Toast.makeText(
-                    context,
-                    "Task title can not be empty.",
+                    mainActivity,
+                    mainActivity.getString(R.string.task_title_empty),
                     Toast.LENGTH_SHORT
                 ).show()
-            }
-            when (action) {
-                "newTask" -> {
-                    val curTime = Calendar.getInstance().timeInMillis
-                    mainActivity.taskViewModel.insert(
-                        Task(
-                            taskTitle = editTitle.text.toString(),
-                            taskStatus = false,
-                            taskDetail = editDetail.text.toString(),
-                            taskCreateDate = curTime
+            } else {
+                when (action) {
+                    "newTask" -> {
+                        val curTime = Calendar.getInstance().timeInMillis
+                        mainActivity.taskViewModel.insert(
+                            Task(
+                                taskTitle = editTitle.text.toString(),
+                                taskStatus = false,
+                                taskDetail = editDetail.text.toString(),
+                                taskCreateDate = curTime
+                            )
                         )
-                    )
-                    Toast.makeText(context, getString(R.string.task_added), Toast.LENGTH_SHORT)
-                        .show()
+                        Toast.makeText(
+                            mainActivity,
+                            mainActivity.getString(R.string.task_added),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    "editTask" -> {
+                        val taskTitle = editTitle.text.toString()
+                        mainActivity.taskViewModel.modify(
+                            taskId,
+                            taskTitle,
+                            editDetail.text.toString()
+                        )
+                        Toast.makeText(
+                            mainActivity,
+                            "Task '${taskTitle}' modified",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-                "editTask" -> {
-                    val taskTitle = editTitle.text.toString()
-                    mainActivity.taskViewModel.modify(
-                        taskId,
-                        taskTitle,
-                        editDetail.text.toString()
-                    )
-                    Toast.makeText(context, "Task '${taskTitle}' modified", Toast.LENGTH_SHORT)
-                        .show()
-                }
+                mainActivity.supportFragmentManager.popBackStack()
             }
-            mainActivity.supportFragmentManager.popBackStack()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as MainActivity).setFabOnClickListener()
+        (activity as MainActivity).title = "My Todo"
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity).title = when (action) {
+            "newTask" -> "New Task"
+            "editTask" -> "Edit Task"
+            else -> "My Todo"
         }
     }
 }

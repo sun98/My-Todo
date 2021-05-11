@@ -8,4 +8,5 @@
     <string name="empty_not_saved">Not saved.</string>
     <string name="toast_empty_title">Task title is empty!</string>
     <string name="task_added">Task added</string>
+    <string name="task_title_empty">Task title can not be empty.</string>
 </resources>

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import cn.nibius.mytodo.room.Task
 import androidx.activity.viewModels
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
@@ -36,15 +37,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnAddTask = findViewById(R.id.fabAddTask)
-        btnAddTask?.setOnClickListener { fabOnClick() }
+        setFabOnClickListener()
     }
 
     private fun fabOnClick() {
         val bundle = Bundle()
         bundle.putString("action", "newTask")
 
-
         supportFragmentManager.commit {
+            this.setCustomAnimations(
+                R.anim.slide_in,
+                R.anim.fade_out,
+                R.anim.fade_in,
+                R.anim.slide_out
+            )
             replace<TaskDetailFragment>(R.id.mainFragmentContainerView, args = bundle)
             setReorderingAllowed(true)
             addToBackStack("newTask")
@@ -56,4 +62,7 @@ class MainActivity : AppCompatActivity() {
         return btnAddTask!!
     }
 
+    fun setFabOnClickListener() {
+        btnAddTask?.setOnClickListener { fabOnClick() }
+    }
 }

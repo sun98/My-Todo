@@ -14,14 +14,13 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
 
         val taskRecyclerView: RecyclerView = view.findViewById(R.id.recTasks)
 
-        val taskViewModel = (activity as MainActivity).taskViewModel
+        val mainActivity = activity as MainActivity
+        val taskViewModel = mainActivity.taskViewModel
         val taskAdapter = TaskAdapter(taskViewModel)
         taskRecyclerView.adapter = taskAdapter
 
         taskViewModel.allTasks.observe(viewLifecycleOwner) { tasks ->
             tasks.let { taskAdapter.submitList(it) }
         }
-
     }
-
 }
