@@ -50,5 +50,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
                 }
             }
         }).attachToRecyclerView(taskRecyclerView)
+        // TODO: fix bug that do not refresh after swipe delete
     }
 }

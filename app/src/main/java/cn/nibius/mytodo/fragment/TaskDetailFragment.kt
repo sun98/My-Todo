@@ -21,14 +21,11 @@ class TaskDetailFragment : Fragment(R.layout.fragment_task_detail) {
         super.onViewCreated(view, savedInstanceState)
         val bundle = arguments
         action = bundle?.getString("action") ?: ""
-        val mainActivity = (activity as MainActivity)
 
         val editTitle = view.findViewById<TextView>(R.id.editTaskTitle)
         val editDetail = view.findViewById<TextView>(R.id.editTaskDetail)
         var taskId = 0L
-        val btnSaveTask = mainActivity.getFab()
         val imageTaskDetail = view.findViewById<ImageView>(R.id.imageTaskDetail)
-        // todo: change the fab icon
 
         if (action == "editTask") {
             val taskData = bundle!!.getStringArrayList("taskData")
@@ -44,8 +41,9 @@ class TaskDetailFragment : Fragment(R.layout.fragment_task_detail) {
                     .into(imageTaskDetail)
             }
         }
+        val mainActivity = activity as MainActivity
 
-        btnSaveTask.setOnClickListener {
+        mainActivity.getFab().setOnClickListener {
             val taskTitle = editTitle.text.toString()
             if (taskTitle == "") {
                 Toast.makeText(
@@ -92,16 +90,20 @@ class TaskDetailFragment : Fragment(R.layout.fragment_task_detail) {
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as MainActivity).setFabOnClickListener()
-        (activity as MainActivity).title = "My Todo"
+        val activity = activity as MainActivity
+        activity.setFabOnClickListener()
+        activity.title = "My Todo"
+        activity.getFab().setImageResource(R.drawable.ic_baseline_add_24)
     }
 
     override fun onResume() {
         super.onResume()
-        (activity as MainActivity).title = when (action) {
+        val activity = activity as MainActivity
+        activity.title = when (action) {
             "newTask" -> "New Task"
             "editTask" -> "Edit Task"
             else -> "My Todo"
         }
+        activity.getFab().setImageResource(R.drawable.ic_baseline_save_24)
     }
 }

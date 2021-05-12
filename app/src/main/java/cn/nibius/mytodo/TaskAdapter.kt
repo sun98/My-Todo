@@ -10,14 +10,12 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.CheckBox
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import cn.nibius.mytodo.activity.MainActivity
 import cn.nibius.mytodo.fragment.TaskDetailFragment
@@ -101,35 +99,21 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
         }
 
         companion object {
-            fun create(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-                if (viewType == 0) {
-                    val view: View = LayoutInflater.from(parent.context)
-                        .inflate(
-                            R.layout.task_item,
-                            parent,
-                            false
-                        )
-                    return TaskViewHolder(view)
-                } else {
-                    val view: View = LayoutInflater.from(parent.context)
-                        .inflate(
-                            R.layout.progress_bar,
-                            parent,
-                            false
-                        )
-                    return ProgressViewHolder(view)
-                }
+            fun create(parent: ViewGroup): RecyclerView.ViewHolder {
+                val view: View = LayoutInflater.from(parent.context)
+                    .inflate(
+                        R.layout.task_item,
+                        parent,
+                        false
+                    )
+                return TaskViewHolder(view)
             }
         }
     }
 
-    class ProgressViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val progressBar: ProgressBar = view.findViewById(R.id.progressBar)
-    }
-
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return TaskViewHolder.create(viewGroup, viewType)
+        return TaskViewHolder.create(viewGroup)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -137,9 +121,6 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
         if (viewHolder is TaskViewHolder) {
             viewHolder.bind(getItem(position), taskViewModel)
         }
-//        } else if (viewHolder is ProgressViewHolder) {
-//             do nothing
-//        }
     }
 
     companion object {
@@ -154,7 +135,4 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
         }
     }
 
-//    override fun getItemViewType(position: Int): Int {
-//        return super.getItemViewType(position)
-//    }
 }
