@@ -20,8 +20,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class MainActivity : AppCompatActivity() {
     private val TAG = "Main activity"
 
-    val taskViewModel: TaskViewModel by viewModels {
-        TaskViewModelFactory((application as TasksApplication).repository)
+
+
+    val taskViewModel by viewModels<TaskViewModel> {
+        TaskViewModelFactory(application)
     }
     private var btnAddTask: FloatingActionButton? = null
 

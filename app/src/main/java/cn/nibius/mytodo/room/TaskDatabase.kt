@@ -5,10 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import cn.nibius.mytodo.util.ioThread
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
+import java.util.concurrent.Executors
 
 @Database(entities = [Task::class], version = 1, exportSchema = false)
 abstract class TaskDatabase : RoomDatabase() {
@@ -19,11 +21,8 @@ abstract class TaskDatabase : RoomDatabase() {
         private var INSTANCE: TaskDatabase? = null
 
         fun getDatabase(
-            context: Context,
-            scope: CoroutineScope
+            context: Context
         ): TaskDatabase {
-            // if the INSTANCE is not null, then return it,
-            // if it is, then create the database
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
@@ -31,45 +30,29 @@ abstract class TaskDatabase : RoomDatabase() {
                     "task_database"
                 )
                     .fallbackToDestructiveMigration()
-                    .addCallback(TaskDatabaseCallback(scope))
+                    .addCallback(object : RoomDatabase.Callback() {
+                        override fun onCreate(db: SupportSQLiteDatabase) {
+                            fillInDb(context.applicationContext)
+                        }
+                    })
                     .build()
                 INSTANCE = instance
-                // return instance
                 instance
             }
         }
 
-        private class TaskDatabaseCallback(
-            private val scope: CoroutineScope
-        ) : RoomDatabase.Callback() {
-            /**
-             * Override the onCreate method to populate the database.
-             */
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
-                // If you want to keep the data through app restarts,
-                // comment out the following line.
-                INSTANCE?.let { database ->
-                    scope.launch(Dispatchers.IO) {
-                        populateDatabase(database.taskDao())
-                    }
-                }
+        private fun fillInDb(context: Context) {
+            ioThread {
+                getDatabase(context).taskDao().insert((1..200).map {
+                    Task(
+                        "Task $it",
+                        false,
+                        "Detail of task $it",
+                        Calendar.getInstance().timeInMillis,
+                        "https://avatars.githubusercontent.com/u/66577"
+                    )
+                })
             }
-        }
-
-        suspend fun populateDatabase(taskDao: TaskDao) {
-            // Start the app with a clean database every time.
-            // Not needed if you only populate on creation.
-            taskDao.deleteAll()
-
-            (1..200).map {
-                Task(
-                    "Task $it",
-                    false,
-                    "Detail of task $it",
-                    Calendar.getInstance().timeInMillis
-                )
-            }.forEach { taskDao.insert(it) }
         }
     }
 }

@@ -4,12 +4,14 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
+import androidx.paging.PagingSource
 
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM task_table ORDER BY task_status,-taskId")
-    fun getAll(): Flow<List<Task>>
+//    fun getAll(): Flow<List<Task>>
+    fun getAll(): PagingSource<Int, Task>
+
 
 //    @Query("SELECT * FROM task_table WHERE taskId IN (:taskIds)")
 //    fun loadAllByIds(taskIds: IntArray): List<TaskData>
@@ -18,24 +20,27 @@ interface TaskDao {
     fun findByTitleAndDetail(keywords: String): List<Task>
 
     @Insert
-    suspend fun insert(task: Task)
+    fun insert(task: Task)
+
+    @Insert
+    fun insert(tasks: List<Task>)
 
     @Delete
     fun delete(task: Task)
 
     @Query("DELETE FROM task_table")
-    suspend fun deleteAll()
+    fun deleteAll()
 
     @Query("UPDATE task_table SET task_status=:status WHERE taskId=:taskId")
-    suspend fun changeStatus(taskId: Long, status: Boolean)
+    fun changeStatus(taskId: Long, status: Boolean)
 
     @Query("UPDATE task_table SET task_title=:taskTitle,task_Detail=:taskDetail WHERE taskId=:taskId")
-    suspend fun modify(
+    fun modify(
         taskId: Long,
         taskTitle: String,
         taskDetail: String?,
     )
 
-    @Query("DELETE FROM task_table WHERE taskId=:taskId")
-    suspend fun deleteById(taskId: Long)
+//    @Query("DELETE FROM task_table WHERE taskId=:taskId")
+//    fun deleteById(taskId: Long)
 }

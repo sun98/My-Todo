@@ -11,5 +11,6 @@ data class Task(
     @ColumnInfo(name = "task_status") val taskStatus: Boolean,
     @ColumnInfo(name = "task_detail") val taskDetail: String?,
     @ColumnInfo(name = "task_create_date") val taskCreateDate: Long,
-    @PrimaryKey(autoGenerate = true) val taskId: Long=0
+    @ColumnInfo(name = "task_image_url") val taskImageUrl: String = "",
+    @PrimaryKey(autoGenerate = true) val taskId: Long = 0
 )

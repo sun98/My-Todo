@@ -1,37 +1,49 @@
 package cn.nibius.mytodo
 
-import android.util.Log
+import android.app.Application
 import androidx.lifecycle.*
+import androidx.paging.*
 import cn.nibius.mytodo.room.Task
-import cn.nibius.mytodo.room.TaskRepository
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import cn.nibius.mytodo.room.TaskDao
+import cn.nibius.mytodo.room.TaskDatabase
+import cn.nibius.mytodo.util.ioThread
+import kotlinx.coroutines.flow.Flow
 import java.lang.IllegalArgumentException
 
-class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
-    val allTasks: LiveData<List<Task>> = repository.allTasks.asLiveData()
-    fun insert(task: Task) = viewModelScope.launch {
-        repository.insert(task)
+class TaskViewModel(private val dao: TaskDao) : ViewModel() {
+    //    val allTasks: LiveData<List<Task>> = repository.allTasks.asLiveData()
+    val taskFlow: Flow<PagingData<Task>> = Pager(
+        PagingConfig(
+            pageSize = 20,
+            enablePlaceholders = false,
+            maxSize = 200
+        )
+    ) {
+        dao.getAll()
+    }.flow.cachedIn(viewModelScope)
+
+    fun insert(task: Task) = ioThread {
+        dao.insert(task)
     }
 
-    fun changeStatus(task: Task) = viewModelScope.launch {
-        repository.changeStatus(task.taskId, !task.taskStatus)
+    fun changeStatus(task: Task) = ioThread {
+        dao.changeStatus(task.taskId, !task.taskStatus)
     }
 
-    fun modify(taskId: Long, taskTitle: String, taskDetail: String) = viewModelScope.launch {
-        repository.modify(taskId, taskTitle, taskDetail)
+    fun modify(taskId: Long, taskTitle: String, taskDetail: String) = ioThread {
+        dao.modify(taskId, taskTitle, taskDetail)
     }
 
-    fun deleteById(taskId: Long) = viewModelScope.launch {
-        repository.deleteById(taskId)
+    fun deleteById(task: Task) = ioThread {
+        dao.delete(task)
     }
 }
 
-class TaskViewModelFactory(private val repository: TaskRepository) : ViewModelProvider.Factory {
+class TaskViewModelFactory(private val app: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TaskViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return TaskViewModel(repository) as T
+            return TaskViewModel(TaskDatabase.getDatabase(app).taskDao()) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
