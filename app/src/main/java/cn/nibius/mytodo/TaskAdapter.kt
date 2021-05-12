@@ -23,7 +23,7 @@ import cn.nibius.mytodo.room.Task
 import com.squareup.picasso.Picasso
 
 class TaskAdapter(private val taskViewModel: TaskViewModel) :
-    PagingDataAdapter<Task, RecyclerView.ViewHolder>(TASKS_COMPARATOR) {
+    PagingDataAdapter<Task, TaskAdapter.TaskViewHolder>(TASKS_COMPARATOR) {
 
     /**
      * Provide a reference to the type of views that you are using
@@ -42,6 +42,7 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
         private val picasso = Picasso.get()
 
         fun bind(task: Task?, taskViewModel: TaskViewModel) {
+            this.task = task
             textTitle.text = task?.taskTitle ?: ""
             textTitle.setTypeface(null, Typeface.BOLD)
             checkBox.isChecked = task?.taskStatus ?: false
@@ -99,7 +100,7 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
         }
 
         companion object {
-            fun create(parent: ViewGroup): RecyclerView.ViewHolder {
+            fun create(parent: ViewGroup): TaskViewHolder {
                 val view: View = LayoutInflater.from(parent.context)
                     .inflate(
                         R.layout.task_item,
@@ -112,15 +113,15 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
     }
 
     // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): TaskViewHolder {
         return TaskViewHolder.create(viewGroup)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
-    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        if (viewHolder is TaskViewHolder) {
-            viewHolder.bind(getItem(position), taskViewModel)
-        }
+    override fun onBindViewHolder(viewHolder: TaskViewHolder, position: Int) {
+//        if (viewHolder is TaskViewHolder) {
+        viewHolder.bind(getItem(position), taskViewModel)
+//        }
     }
 
     companion object {

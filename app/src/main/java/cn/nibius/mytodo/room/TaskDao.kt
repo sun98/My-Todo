@@ -41,6 +41,30 @@ interface TaskDao {
         taskDetail: String?,
     )
 
-//    @Query("DELETE FROM task_table WHERE taskId=:taskId")
-//    fun deleteById(taskId: Long)
+    @Query("DELETE FROM task_table WHERE taskId=:taskId")
+    fun deleteById(taskId: Long)
+
+    @Query("UPDATE task_table SET task_title=(CASE WHEN taskId=:oldId then :newTitle ELSE :oldTitle END),task_detail=(CASE WHEN taskId=:oldId then :newDetail ELSE :oldDetail END),task_image_url=(CASE WHEN taskId=:oldId then :newImage ELSE :oldImage END),task_status=(CASE WHEN taskId=:oldId then :newStatus ELSE :oldStatus END),task_create_date=(CASE WHEN taskId=:oldId then :newDate ELSE :oldDate END) WHERE taskId IN(:oldId, :newId)")
+    fun swap(
+        oldId: Long,
+        newId: Long,
+        oldTitle: String,
+        newTitle: String,
+        oldDetail: String,
+        newDetail: String,
+        oldStatus: Boolean,
+        newStatus: Boolean,
+        oldImage: String,
+        newImage: String,
+        oldDate: Long,
+        newDate: Long
+    )
 }
+
+//update t
+//set t.id = (case when t.id = 100 then 101 else 101 end)
+//where t.id in (100, 101)
+
+//UPDATE t, t as t2
+//SET t.id = t2.id, t2.id = t.id
+//WHERE t.id = 1 AND t2.id = 2

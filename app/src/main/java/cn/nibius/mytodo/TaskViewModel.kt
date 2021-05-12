@@ -34,8 +34,25 @@ class TaskViewModel(private val dao: TaskDao) : ViewModel() {
         dao.modify(taskId, taskTitle, taskDetail)
     }
 
-    fun deleteById(task: Task) = ioThread {
+    fun delete(task: Task) = ioThread {
         dao.delete(task)
+    }
+
+    fun swap(oldTask: Task, newTask: Task) = ioThread {
+        dao.swap(
+            oldTask.taskId,
+            newTask.taskId,
+            oldTask.taskTitle,
+            newTask.taskTitle,
+            oldTask.taskDetail ?: "",
+            newTask.taskDetail ?: "",
+            oldTask.taskStatus,
+            newTask.taskStatus,
+            oldTask.taskImageUrl,
+            newTask.taskImageUrl,
+            oldTask.taskCreateDate,
+            newTask.taskCreateDate
+        )
     }
 }
 
