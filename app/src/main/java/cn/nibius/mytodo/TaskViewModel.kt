@@ -1,6 +1,7 @@
 package cn.nibius.mytodo
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.*
 import cn.nibius.mytodo.room.Task
@@ -38,21 +39,33 @@ class TaskViewModel(private val dao: TaskDao) : ViewModel() {
         dao.delete(task)
     }
 
-    fun swap(oldTask: Task, newTask: Task) = ioThread {
-        dao.swap(
-            oldTask.taskId,
-            newTask.taskId,
-            oldTask.taskTitle,
-            newTask.taskTitle,
-            oldTask.taskDetail ?: "",
-            newTask.taskDetail ?: "",
-            oldTask.taskStatus,
-            newTask.taskStatus,
-            oldTask.taskImageUrl,
-            newTask.taskImageUrl,
-            oldTask.taskCreateDate,
-            newTask.taskCreateDate
-        )
+    val taskMaxInd: LiveData<Long> = dao.getSize()
+
+//    fun swap(oldTask: Task, newTask: Task) = ioThread {
+//        dao.swap(
+//            oldTask.taskId,
+//            newTask.taskId,
+//            oldTask.taskTitle,
+//            newTask.taskTitle,
+//            oldTask.taskDetail ?: "",
+//            newTask.taskDetail ?: "",
+//            oldTask.taskStatus,
+//            newTask.taskStatus,
+//            oldTask.taskImageUrl,
+//            newTask.taskImageUrl,
+//            oldTask.taskCreateDate,
+//            newTask.taskCreateDate
+//        )
+//        dao.swap(oldTask.taskId, newTask.taskId, oldTask.taskInd, newTask.taskInd)
+//    }
+
+    fun reOrder(taskId: Long, newInd: Long) = ioThread {
+        dao.reOrder(taskId, newInd)
+    }
+
+    fun move(taskIndBegin: Long, taskIndEnd: Long, step: Long) = ioThread {
+        Log.d("task view model", "move: ")
+        dao.move(taskIndBegin, taskIndEnd, step)
     }
 }
 

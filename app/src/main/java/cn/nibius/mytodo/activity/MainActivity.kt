@@ -1,14 +1,8 @@
 package cn.nibius.mytodo.activity
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import cn.nibius.mytodo.room.Task
 import androidx.activity.viewModels
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
@@ -21,10 +15,11 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "Main activity"
 
 
-
     val taskViewModel by viewModels<TaskViewModel> {
         TaskViewModelFactory(application)
     }
+    var taskMax = 0L
+
     private var btnAddTask: FloatingActionButton? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +32,10 @@ class MainActivity : AppCompatActivity() {
                 add<TaskListFragment>(R.id.mainFragmentContainerView)
             }
         }
+
+        taskViewModel.taskMaxInd.observe(this, {
+            taskMax = it
+        })
 
         btnAddTask = findViewById(R.id.fabAddTask)
         setFabOnClickListener()

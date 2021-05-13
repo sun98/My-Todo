@@ -49,7 +49,9 @@ abstract class TaskDatabase : RoomDatabase() {
                         false,
                         "Detail of task $it",
                         Calendar.getInstance().timeInMillis,
-                        "https://avatars.githubusercontent.com/u/66577"
+                        "https://avatars.githubusercontent.com/u/66577",
+                        0,
+                        it.toLong()
                     )
                 })
             }

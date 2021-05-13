@@ -47,7 +47,7 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
             textTitle.setTypeface(null, Typeface.BOLD)
             checkBox.isChecked = task?.taskStatus ?: false
             textDetail.text = task?.taskDetail ?: ""
-            Log.d(TAG, "bind: ${task?.taskImageUrl}")
+//            Log.d(TAG, "bind: ${task?.taskImageUrl}")
             picasso.setIndicatorsEnabled(true)
             picasso
                 .load(task?.taskImageUrl)
@@ -125,13 +125,14 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
     }
 
     companion object {
+        var disableAnimation = false
         private val TASKS_COMPARATOR = object : DiffUtil.ItemCallback<Task>() {
             override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
-                return oldItem.taskId == newItem.taskId
+                return disableAnimation || oldItem.taskId == newItem.taskId
             }
 
             override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
-                return oldItem == newItem
+                return disableAnimation || oldItem == newItem
             }
         }
     }

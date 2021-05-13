@@ -1,6 +1,7 @@
 package cn.nibius.mytodo.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.squareup.picasso.Picasso
 import java.util.*
 
 class TaskDetailFragment : Fragment(R.layout.fragment_task_detail) {
+    val TAG = "task detail fragment"
     var action = ""
     private val picasso = Picasso.get()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,12 +57,14 @@ class TaskDetailFragment : Fragment(R.layout.fragment_task_detail) {
                 when (action) {
                     "newTask" -> {
                         val curTime = Calendar.getInstance().timeInMillis
+                        Log.d(TAG, "onViewCreated: ${mainActivity.taskMax}")
                         mainActivity.taskViewModel.insert(
                             Task(
                                 taskTitle = editTitle.text.toString(),
                                 taskStatus = false,
                                 taskDetail = editDetail.text.toString(),
-                                taskCreateDate = curTime
+                                taskCreateDate = curTime,
+                                taskInd = mainActivity.taskMax + 1
                             )
                         )
                         Toast.makeText(

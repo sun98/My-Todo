@@ -1,5 +1,6 @@
 package cn.nibius.mytodo.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -8,13 +9,11 @@ import androidx.paging.PagingSource
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM task_table ORDER BY task_status,-taskId")
-//    fun getAll(): Flow<List<Task>>
+    @Query("SELECT * FROM task_table ORDER BY task_status,-task_ind")
     fun getAll(): PagingSource<Int, Task>
 
-
-//    @Query("SELECT * FROM task_table WHERE taskId IN (:taskIds)")
-//    fun loadAllByIds(taskIds: IntArray): List<TaskData>
+    @Query("SELECT MAX(task_ind) FROM task_table")
+    fun getSize(): LiveData<Long>
 
     @Query("SELECT * FROM task_table WHERE task_title LIKE :keywords OR task_detail LIKE :keywords")
     fun findByTitleAndDetail(keywords: String): List<Task>
@@ -44,21 +43,30 @@ interface TaskDao {
     @Query("DELETE FROM task_table WHERE taskId=:taskId")
     fun deleteById(taskId: Long)
 
-    @Query("UPDATE task_table SET task_title=(CASE WHEN taskId=:oldId then :newTitle ELSE :oldTitle END),task_detail=(CASE WHEN taskId=:oldId then :newDetail ELSE :oldDetail END),task_image_url=(CASE WHEN taskId=:oldId then :newImage ELSE :oldImage END),task_status=(CASE WHEN taskId=:oldId then :newStatus ELSE :oldStatus END),task_create_date=(CASE WHEN taskId=:oldId then :newDate ELSE :oldDate END) WHERE taskId IN(:oldId, :newId)")
-    fun swap(
-        oldId: Long,
-        newId: Long,
-        oldTitle: String,
-        newTitle: String,
-        oldDetail: String,
-        newDetail: String,
-        oldStatus: Boolean,
-        newStatus: Boolean,
-        oldImage: String,
-        newImage: String,
-        oldDate: Long,
-        newDate: Long
-    )
+//    @Query("UPDATE task_table SET task_title=(CASE WHEN taskId=:oldId then :newTitle ELSE :oldTitle END),task_detail=(CASE WHEN taskId=:oldId then :newDetail ELSE :oldDetail END),task_image_url=(CASE WHEN taskId=:oldId then :newImage ELSE :oldImage END),task_status=(CASE WHEN taskId=:oldId then :newStatus ELSE :oldStatus END),task_create_date=(CASE WHEN taskId=:oldId then :newDate ELSE :oldDate END) WHERE taskId IN(:oldId, :newId)")
+//    fun swap(
+//        oldId: Long,
+//        newId: Long,
+//        oldTitle: String,
+//        newTitle: String,
+//        oldDetail: String,
+//        newDetail: String,
+//        oldStatus: Boolean,
+//        newStatus: Boolean,
+//        oldImage: String,
+//        newImage: String,
+//        oldDate: Long,
+//        newDate: Long
+//    )
+
+//    @Query("UPDATE task_table SET task_ind=(CASE WHEN taskId=:fromId THEN :toInd ELSE :fromInd END) WHERE taskId IN (:fromId,:toId)")
+//    fun swap(fromId: Long, toId: Long, fromInd: Long, toInd: Long)
+
+    @Query("UPDATE task_table SET task_ind=:newInd WHERE taskId=:taskId")
+    fun reOrder(taskId: Long, newInd: Long)
+
+    @Query("UPDATE task_table set task_ind=task_ind+:step where task_ind between :taskIndBegin and :taskIndEnd")
+    fun move(taskIndBegin: Long, taskIndEnd: Long, step: Long)
 }
 
 //update t

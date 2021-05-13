@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import cn.nibius.mytodo.activity.MainActivity
 import cn.nibius.mytodo.R
 import cn.nibius.mytodo.TaskAdapter
+import cn.nibius.mytodo.room.Task
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -32,6 +33,13 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
         }
 
         ItemTouchHelper(object : ItemTouchHelper.Callback() {
+            private var fromTask: Task? = null
+            private val toTaskList: MutableList<String> = mutableListOf()
+//            private var toTask: Task? = null
+//            private var movedTaskList: MutableList<Task>? =null
+
+            private var fromInd: Long? = null
+            private var toInd: Long? = null
             override fun getMovementFlags(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
@@ -47,11 +55,44 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                val oldTask = (viewHolder as TaskAdapter.TaskViewHolder).task
-                val newTask = (target as TaskAdapter.TaskViewHolder).task
-                Log.d(TAG, "onMove: ")
-                oldTask?.let { newTask?.let { it1 -> taskViewModel.swap(it, it1) } }
+//                Log.d(TAG, "onMove: ${viewHolder.layoutPosition}, ${target.layoutPosition}")
+                if (fromTask == null) fromTask = (viewHolder as TaskAdapter.TaskViewHolder).task!!
+                if (fromInd == null) fromInd =
+                    (viewHolder as TaskAdapter.TaskViewHolder).task!!.taskInd
+                toInd = (target as TaskAdapter.TaskViewHolder).task!!.taskInd
+//                toTaskList.add((target as TaskAdapter.TaskViewHolder).task!!.taskId.toString())
+//                if (fromTask == null)
+//                toTask = (target as TaskAdapter.TaskViewHolder).task!!
+//                Log.d(TAG, "onMove: ${fromTask!!.taskId}, ${toTask!!.taskId}")
+//                fromId = fromTask.taskId
+//                toId = toTask.taskId
+//                fromInd = fromTask.taskInd
+//                toInd = toTask.taskInd
+                taskAdapter.notifyItemMoved(viewHolder.layoutPosition, target.layoutPosition)
                 return true
+            }
+
+            override fun clearView(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ) {
+                super.clearView(recyclerView, viewHolder)
+                Log.d(TAG, "clearView: ${fromInd},${toInd}")
+                if (fromInd != null && toInd != null) {
+                    if (fromInd!! < toInd!!) {
+                        taskViewModel.move(fromInd!! + 1, toInd!!, -1)
+                        Log.d(TAG, "clearView: ${fromInd!! + 1} ~ ${toInd!!} -> -1")
+                    } else if (fromInd!! > toInd!!) {
+                        taskViewModel.move(toInd!!, fromInd!! - 1, 1)
+                        Log.d(TAG, "clearView: ${toInd!!} ~ ${fromInd!! - 1} -> +1")
+                    }
+                    taskViewModel.reOrder(fromTask!!.taskId, toInd!!)
+
+                }
+//                taskAdapter.notifyDataSetChanged()
+                fromInd = null
+                toInd = null
+                fromTask = null
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -65,6 +106,5 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
                 }
             }
         }).attachToRecyclerView(taskRecyclerView)
-        // TODO: fix bug that do not refresh after swipe delete
     }
 }
