@@ -1,6 +1,7 @@
 package cn.nibius.mytodo.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.viewModels
 import androidx.fragment.app.add
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fabOnClick() {
+        Log.d(TAG, "fabOnClick: ")
         val bundle = Bundle()
         bundle.putString("action", "newTask")
 
@@ -67,5 +69,3 @@ class MainActivity : AppCompatActivity() {
         btnAddTask?.setOnClickListener { fabOnClick() }
     }
 }
-
-// view drag helper

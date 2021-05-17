@@ -34,9 +34,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
 
         ItemTouchHelper(object : ItemTouchHelper.Callback() {
             private var fromTask: Task? = null
-            private val toTaskList: MutableList<String> = mutableListOf()
-//            private var toTask: Task? = null
-//            private var movedTaskList: MutableList<Task>? =null
 
             private var fromInd: Long? = null
             private var toInd: Long? = null
@@ -60,14 +57,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
                 if (fromInd == null) fromInd =
                     (viewHolder as TaskAdapter.TaskViewHolder).task!!.taskInd
                 toInd = (target as TaskAdapter.TaskViewHolder).task!!.taskInd
-//                toTaskList.add((target as TaskAdapter.TaskViewHolder).task!!.taskId.toString())
-//                if (fromTask == null)
-//                toTask = (target as TaskAdapter.TaskViewHolder).task!!
-//                Log.d(TAG, "onMove: ${fromTask!!.taskId}, ${toTask!!.taskId}")
-//                fromId = fromTask.taskId
-//                toId = toTask.taskId
-//                fromInd = fromTask.taskInd
-//                toInd = toTask.taskInd
                 taskAdapter.notifyItemMoved(viewHolder.layoutPosition, target.layoutPosition)
                 return true
             }
@@ -87,9 +76,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
                         Log.d(TAG, "clearView: ${toInd!!} ~ ${fromInd!! - 1} -> +1")
                     }
                     taskViewModel.reOrder(fromTask!!.taskId, toInd!!)
-
                 }
-//                taskAdapter.notifyDataSetChanged()
                 fromInd = null
                 toInd = null
                 fromTask = null

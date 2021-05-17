@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso
 
 class TaskAdapter(private val taskViewModel: TaskViewModel) :
     PagingDataAdapter<Task, TaskAdapter.TaskViewHolder>(TASKS_COMPARATOR) {
+    private val TAG = "task adapter"
 
     /**
      * Provide a reference to the type of views that you are using
@@ -31,6 +32,7 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
      */
     class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val TAG = "task view holder"
+
         var task: Task? = null
             private set
         private val textTitle: TextView = view.findViewById(R.id.textTaskTitle)
@@ -101,6 +103,7 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
 
         companion object {
             fun create(parent: ViewGroup): TaskViewHolder {
+                taskViewHolderCount += 1
                 val view: View = LayoutInflater.from(parent.context)
                     .inflate(
                         R.layout.task_item,
@@ -109,19 +112,30 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
                     )
                 return TaskViewHolder(view)
             }
+
+            var taskViewHolderCount: Int = 0
         }
     }
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): TaskViewHolder {
-        return TaskViewHolder.create(viewGroup)
+        val viewHolder = TaskViewHolder.create(viewGroup)
+        Log.d(TAG, "onCreateViewHolder: view holder count=${TaskViewHolder.taskViewHolderCount}")
+        return viewHolder
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: TaskViewHolder, position: Int) {
+        Log.d(TAG, "onBindViewHolder: position=$position")
 //        if (viewHolder is TaskViewHolder) {
         viewHolder.bind(getItem(position), taskViewModel)
 //        }
+    }
+
+    override fun getItemCount(): Int {
+        val itemCount = super.getItemCount()
+//        Log.d(TAG, "getItemCount: $itemCount")
+        return itemCount
     }
 
     companion object {
