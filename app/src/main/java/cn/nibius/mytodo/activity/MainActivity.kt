@@ -1,3 +1,5 @@
+@file:Suppress("PrivatePropertyName")
+
 package cn.nibius.mytodo.activity
 
 import android.os.Bundle
@@ -15,11 +17,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class MainActivity : AppCompatActivity() {
     private val TAG = "Main activity"
 
-
     val taskViewModel by viewModels<TaskViewModel> {
         TaskViewModelFactory(application)
     }
     var taskMax = 0L
+
 
     private var btnAddTask: FloatingActionButton? = null
 

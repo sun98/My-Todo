@@ -127,14 +127,11 @@ class TaskAdapter(private val taskViewModel: TaskViewModel) :
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: TaskViewHolder, position: Int) {
         Log.d(TAG, "onBindViewHolder: position=$position")
-//        if (viewHolder is TaskViewHolder) {
         viewHolder.bind(getItem(position), taskViewModel)
-//        }
     }
 
     override fun getItemCount(): Int {
         val itemCount = super.getItemCount()
-//        Log.d(TAG, "getItemCount: $itemCount")
         return itemCount
     }
 

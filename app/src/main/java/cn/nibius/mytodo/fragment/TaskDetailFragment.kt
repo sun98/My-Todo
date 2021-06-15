@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package cn.nibius.mytodo.fragment
 
 import android.os.Bundle
